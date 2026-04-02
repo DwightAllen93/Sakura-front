@@ -1,0 +1,53 @@
+@import "tailwindcss" source(none);
+@source '../**/*.{js,ts,jsx,tsx}';
+
+@import "tw-animate-css";
+
+/* HERO ANIMATIONS */
+
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeRight {
+  0% {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ANIMATION CLASSES */
+
+.animate-fadeUp {
+  animation: fadeUp 0.9s ease-out forwards;
+}
+
+.animate-fadeLeft {
+  animation: fadeLeft 0.9s ease-out forwards;
+}
+
+.animate-fadeRight {
+  animation: fadeRight 0.9s ease-out forwards;
+}
