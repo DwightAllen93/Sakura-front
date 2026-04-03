@@ -78,12 +78,12 @@ export function DataProvider({ children }) {
 
 
   const value = {
-    services,
-    locations,
-    setLocations,
-    inquiries,
-  };
-
+  services,
+  setServices, // 🔥 ADD THIS
+  locations,
+  setLocations,
+  inquiries,
+};
 
   return (
     <DataContext.Provider value={value}>

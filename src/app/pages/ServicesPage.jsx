@@ -148,7 +148,7 @@ export function ServicesPage() {
             const Icon = iconMap[service.icon] || Home;
 
             const imageUrl = service.image
-              ? "http://localhost/sakuracare-api/uploads/" + service.image
+              ? "https://ejeepthesis.site/backend/uploads/" + service.image
               : "/background.png";
 
             return (

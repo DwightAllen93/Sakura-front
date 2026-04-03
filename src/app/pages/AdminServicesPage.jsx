@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useData } from "../context/DataContext";
 import { useAuth } from "../context/AuthContext";
+import toast, { Toaster } from "react-hot-toast";
+
 import {
+  Edit2,
+  Trash2,
   Plus,
   Briefcase,
   LogOut,
@@ -12,8 +16,8 @@ import {
 import { CherryBlossoms } from "../components/CherryBlossoms";
 
 export function AdminServicesPage() {
-
-  const { services } = useData();
+const [deleteId, setDeleteId] = useState(null);
+const { services, setServices } = useData();
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -58,41 +62,178 @@ export function AdminServicesPage() {
 
     try {
 
-      const res = await fetch(
-        "https://ejeepthesis.site/backend/add-service.php",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+    const url = editingId
+  ? "https://ejeepthesis.site/backend/update-service.php"
+  : "https://ejeepthesis.site/backend/add-service.php";
+
+if (editingId) {
+  formData.append("id", editingId); // 🔥 THIS WAS MISSING
+}
+
+const res = await fetch(url, {
+  method: "POST",
+  body: formData,
+});
 
       const data = await res.json();
 
-      if (data.success) {
+ if (data.success) {
 
-        alert("Service added");
+toast.success(
+  editingId
+    ? "🌸 Service updated successfully!"
+    : "🌸 Service added successfully!"
+);
 
-        setServiceForm({
-          title: "",
-          tagline: "",
-          description: "",
-          icon: "home",
-          image: null,
-        });
+  if (editingId) {
+    // ✅ UPDATE ONLY AFTER SUCCESS
+    setServices(prev =>
+      prev.map(s =>
+        s.id === editingId
+          ? { ...s, ...serviceForm }
+          : s
+      )
+    );
+  } else {
+    // ✅ ADD
+    const newService = {
+      id: Date.now(),
+      ...serviceForm,
+      image: preview,
+    };
 
-        setPreview(null);
-      }
+    setServices(prev => [...prev, newService]);
+  }
+
+  // RESET
+  setServiceForm({
+    title: "",
+    tagline: "",
+    description: "",
+    icon: "home",
+    image: null,
+  });
+
+  setPreview(null);
+  setEditingId(null);
+}
 
     } catch (err) {
-      console.log(err);
-    }
+  console.log(err);
+  toast.error("Something went wrong ❌");
+}
   };
+
+ const handleDelete = async () => {
+  if (!deleteId) return;
+
+  try {
+    const res = await fetch(
+      "https://ejeepthesis.site/backend/delete-service.php",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: deleteId }),
+      }
+    );
+
+    const data = await res.json();
+
+    if (data.success) {
+      setServices(prev => prev.filter(s => s.id !== deleteId));
+      toast.success("🗑️ Service deleted!");
+    }
+
+  } catch (err) {
+    console.log(err);
+    toast.error("Delete failed ❌");
+  }
+
+  setDeleteId(null); // close modal
+};
+  const [editingId, setEditingId] = useState(null);
+  const handleEdit = (service) => {
+
+    setServiceForm({
+      title: service.title,
+      tagline: service.tagline,
+      description: service.description,
+      icon: service.icon,
+      image: null,
+    });
+
+    setEditingId(service.id);
+  };
+
+
 
 
   return (
     <div className="bg-background min-h-screen">
+{deleteId && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 
+    <div className="bg-white rounded-2xl p-6 w-[350px] text-center shadow-xl">
 
+      <h2 className="text-xl font-semibold text-primary mb-3">
+        🌸 Confirm Delete
+      </h2>
+
+      <p className="text-gray-600 mb-6">
+        Are you sure you want to delete this service?
+      </p>
+
+      <div className="flex justify-center gap-4">
+
+        {/* CANCEL */}
+        <button
+          onClick={() => setDeleteId(null)}
+          className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+
+        {/* CONFIRM */}
+        <button
+          onClick={handleDelete}
+          className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-pink-600"
+        >
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
+<Toaster
+  position="top-right"
+  toastOptions={{
+    style: {
+      background: "#fce7f3",
+      color: "#9d174d",
+      border: "1px solid #f9a8d4",
+      borderRadius: "12px",
+      padding: "12px 16px",
+      fontWeight: "500",
+    },
+    success: {
+      iconTheme: {
+        primary: "#ec4899",
+        secondary: "#ffffff",
+      },
+    },
+    error: {
+      style: {
+        background: "#ffe4e6",
+        color: "#be123c",
+      },
+    },
+  }}
+/>
       {/* HEADER */}
       <section
         className="py-20 bg-cover bg-center"
@@ -271,10 +412,8 @@ export function AdminServicesPage() {
 
 
 
-                <button
-                  className="bg-primary text-white px-6 py-2 rounded"
-                >
-                  Add Service
+                <button className="bg-primary text-white px-6 py-2 rounded">
+                  {editingId ? "Update Service" : "Add Service"}
                 </button>
 
               </form>
@@ -292,15 +431,37 @@ export function AdminServicesPage() {
               </h2>
 
               {services.map((s) => (
-                <div
-                  key={s.id}
-                  className="border p-3 mb-2 rounded"
-                >
-                  <b>{s.title}</b>
-                  <div>{s.tagline}</div>
+                <div key={s.id} className="border p-3 mb-2 rounded flex justify-between items-center">
+
+                  <div>
+                    <b>{s.title}</b>
+                    <div>{s.tagline}</div>
+                  </div>
+
+                  <div className="flex gap-2">
+
+                    {/* EDIT ICON */}
+                    <button
+                      onClick={() => handleEdit(s)}
+                      className="p-2 rounded hover:bg-blue-100 transition"
+                      title="Edit"
+                    >
+                      <Edit2 className="w-4 h-4 text-blue-600" />
+                    </button>
+
+                    {/* DELETE ICON */}
+                    <button
+                      onClick={() => setDeleteId(s.id)}
+                      className="p-2 rounded hover:bg-red-100 transition"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-600" />
+                    </button>
+
+                  </div>
+
                 </div>
               ))}
-
             </div>
 
 

@@ -3,6 +3,8 @@ import { useNavigate } from "react-router";
 import { useData } from "../context/DataContext";
 import { useAuth } from "../context/AuthContext";
 import { Upload, X } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
+
 import {
   Plus,
   Trash2,
@@ -20,9 +22,9 @@ export function AdminLocationsPage() {
 
   const { logout } = useAuth();
   const navigate = useNavigate();
-
+  const [deleteId, setDeleteId] = useState(null);
   const API =
-    "http://localhost/sakuracare-api/uploads/locations/";
+    "https://ejeepthesis.site/backend/uploads/locations/";
 
   const [editImages, setEditImages] =
     useState([]);
@@ -39,7 +41,41 @@ export function AdminLocationsPage() {
   const [selectedLocation,
     setSelectedLocation] =
     useState(null);
+  const [addresses, setAddresses] = useState({});
+  const [localLocations, setLocalLocations] = useState(locations);
+  useEffect(() => {
+  setLocalLocations(locations);
+}, [locations]);
 
+  useEffect(() => {
+  locations.forEach((loc) => {
+
+    if (!loc.lat || !loc.lng) return;
+
+
+    if (addresses[loc.id]) return;
+
+    fetch(
+  `https://nominatim.openstreetmap.org/reverse?format=json&lat=${loc.lat}&lon=${loc.lng}`,
+  {
+    headers: {
+      "User-Agent": "sakuracare-app"
+    }
+  }
+)
+      .then((res) => res.json())
+      .then((data) => {
+        setAddresses((prev) => ({
+          ...prev,
+          [loc.id]: data.display_name,
+        }));
+      })
+      .catch(() => {
+        console.log("Failed to fetch address");
+      });
+
+  });
+}, [locations]);
   const [currentImg,
     setCurrentImg] =
     useState(0);
@@ -56,48 +92,27 @@ export function AdminLocationsPage() {
 
   // ===================== SUBMIT
 
-  const handleLocationSubmit = async (e) => {
+const handleLocationSubmit = async (e) => {
+  e.preventDefault();
 
-    e.preventDefault();
+  const formData = new FormData();
 
-    const formData = new FormData();
+  formData.append("name", locationForm.name);
+  formData.append("lat", locationForm.lat);
+  formData.append("lng", locationForm.lng);
+  formData.append("mapLink", locationForm.mapLink);
 
-    formData.append(
-      "name",
-      locationForm.name
-    );
+  locationForm.images.forEach((img) => {
+    formData.append("images[]", img);
+  });
 
-    formData.append(
-      "lat",
-      locationForm.lat
-    );
-
-    formData.append(
-      "lng",
-      locationForm.lng
-    );
-
-    formData.append(
-      "mapLink",
-      locationForm.mapLink
-    );
-    locationForm.images.forEach(
-      img => {
-        formData.append(
-          "images[]",
-          img
-        );
-      }
-    );
+  try {
+    let res;
 
     if (editingLocationId) {
+      formData.append("id", editingLocationId);
 
-      formData.append(
-        "id",
-        editingLocationId
-      );
-
-      await fetch(
+      res = await fetch(
         "https://ejeepthesis.site/backend/update-location.php",
         {
           method: "POST",
@@ -105,9 +120,9 @@ export function AdminLocationsPage() {
         }
       );
 
+      toast.success("🌸 Location updated!");
     } else {
-
-      await fetch(
+      res = await fetch(
         "https://ejeepthesis.site/backend/add-location.php",
         {
           method: "POST",
@@ -115,11 +130,34 @@ export function AdminLocationsPage() {
         }
       );
 
+      toast.success("🌸 Location added!");
     }
+setLocalLocations(prev => [
+  ...prev,
+  {
+    id: Date.now(), // temporary id
+    ...locationForm,
+    images: previewImages
+  }
+]);
+    // ✅ RESET FORM (instead of reload)
+    setLocationForm({
+      name: "",
+      lat: "",
+      lng: "",
+      mapLink: "",
+      images: [],
+    });
 
-    window.location.reload();
+    setPreviewImages([]);
+    setEditImages([]);
+    setEditingLocationId(null);
 
-  };
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong ❌");
+  }
+};
 
 
   // ===================== EDIT
@@ -147,16 +185,13 @@ export function AdminLocationsPage() {
 
   // ===================== DELETE
 
-  const handleRemoveLocation = async (id) => {
+const handleRemoveLocation = async () => {
+  if (!deleteId) return;
 
-    if (!window.confirm("Delete?"))
-      return;
+  const formData = new FormData();
+  formData.append("id", deleteId);
 
-    const formData =
-      new FormData();
-
-    formData.append("id", id);
-
+  try {
     await fetch(
       "https://ejeepthesis.site/backend/delete-location.php",
       {
@@ -165,9 +200,20 @@ export function AdminLocationsPage() {
       }
     );
 
-    window.location.reload();
+    toast.success("🗑️ Location deleted!");
 
-  };
+    // ✅ THIS IS THE MAGIC LINE
+    setLocalLocations(prev =>
+      prev.filter(loc => loc.id !== deleteId)
+    );
+
+    setDeleteId(null);
+
+  } catch (err) {
+    console.log(err);
+    toast.error("Delete failed ❌");
+  }
+};
 
 
   // ===================== IMAGE
@@ -273,8 +319,20 @@ export function AdminLocationsPage() {
   return (
 
     <div className="bg-background min-h-screen">
-
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: "#fce7f3",
+            color: "#9d174d",
+            border: "1px solid #f9a8d4",
+            borderRadius: "12px",
+          },
+        }}
+      />
       <section
+
+
         className="py-20 bg-cover bg-center"
         style={{
           backgroundImage:
@@ -312,106 +370,106 @@ export function AdminLocationsPage() {
 
             <div className="bg-white p-8 rounded-2xl shadow">
 
-<form
-  onSubmit={handleLocationSubmit}
-  className="space-y-4"
->
+              <form
+                onSubmit={handleLocationSubmit}
+                className="space-y-4"
+              >
 
-  <input
-    className="w-full border p-3 rounded"
-    placeholder="Name"
-    value={locationForm.name}
-    onChange={(e) =>
-      setLocationForm({
-        ...locationForm,
-        name: e.target.value,
-      })
-    }
-  />
+                <input
+                  className="w-full border p-3 rounded"
+                  placeholder="Name"
+                  value={locationForm.name}
+                  onChange={(e) =>
+                    setLocationForm({
+                      ...locationForm,
+                      name: e.target.value,
+                    })
+                  }
+                />
 
-  <input
-    className="w-full border p-3"
-    value={locationForm.lat}
-    readOnly
-  />
+                <input
+                  className="w-full border p-3"
+                  value={locationForm.lat}
+                  readOnly
+                />
 
-  <input
-    className="w-full border p-3"
-    value={locationForm.lng}
-    readOnly
-  />
+                <input
+                  className="w-full border p-3"
+                  value={locationForm.lng}
+                  readOnly
+                />
 
-  {/* MAP LINK INPUT */}
+                {/* MAP LINK INPUT */}
 
-  <input
-    className="w-full border p-3 rounded"
-    placeholder="Paste Google Map link"
-    value={locationForm.mapLink}
-    onChange={(e) => {
+                <input
+                  className="w-full border p-3 rounded"
+                  placeholder="Paste Google Map link"
+                  value={locationForm.mapLink}
+                  onChange={(e) => {
 
-      const link = e.target.value;
+                    const link = e.target.value;
 
-      let lat = locationForm.lat;
-      let lng = locationForm.lng;
+                    let lat = locationForm.lat;
+                    let lng = locationForm.lng;
 
-      // @lat,lng
-      let match = link.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+                    // @lat,lng
+                    let match = link.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
 
-      if (match) {
-        lat = match[1];
-        lng = match[2];
-      }
+                    if (match) {
+                      lat = match[1];
+                      lng = match[2];
+                    }
 
-      // !3dlat!4dlng
-      let match2 = link.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+                    // !3dlat!4dlng
+                    let match2 = link.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
 
-      if (match2) {
-        lat = match2[1];
-        lng = match2[2];
-      }
+                    if (match2) {
+                      lat = match2[1];
+                      lng = match2[2];
+                    }
 
-      // q=lat,lng
-      let match3 = link.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+                    // q=lat,lng
+                    let match3 = link.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
 
-      if (match3) {
-        lat = match3[1];
-        lng = match3[2];
-      }
+                    if (match3) {
+                      lat = match3[1];
+                      lng = match3[2];
+                    }
 
-      setLocationForm({
-        ...locationForm,
-        mapLink: link,
-        lat,
-        lng,
-      });
+                    setLocationForm({
+                      ...locationForm,
+                      mapLink: link,
+                      lat,
+                      lng,
+                    });
 
-    }}
-  />
+                  }}
+                />
 
-  {/* ✅ ALWAYS VISIBLE BUTTON */}
+                {/* ✅ ALWAYS VISIBLE BUTTON */}
 
-  <a
-    href={
-      locationForm.mapLink
-        ? locationForm.mapLink
-        : "https://maps.google.com"
-    }
-    target="_blank"
-    rel="noreferrer"
-    className="inline-block bg-blue-500 text-white px-3 py-1 rounded text-sm"
-  >
-    Open Google Map
-  </a>
+                <a
+                  href={
+                    locationForm.mapLink
+                      ? locationForm.mapLink
+                      : "https://maps.google.com"
+                  }
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-block bg-blue-500 text-white px-3 py-1 rounded text-sm"
+                >
+                  Open Google Map
+                </a>
 
-  {/* MAP UI */}
+                {/* MAP UI */}
 
-  <div
-    id="map"
-    style={{
-      width: "100%",
-      height: "300px",
-    }}
-  ></div>
+                <div
+                  id="map"
+                  style={{
+                    width: "100%",
+                    height: "300px",
+                  }}
+                ></div>
 
 
                 {/* upload */}
@@ -538,62 +596,77 @@ export function AdminLocationsPage() {
             {/* LIST */}
 
             <div className="bg-white p-8 rounded-2xl shadow">
-
-              {locations.map(location => (
+              <h2 className="text-xl font-semibold text-primary mb-4">
+                📍 Location List
+              </h2>
+              {localLocations.map(location => (
 
                 <div
                   key={location.id}
-                  className="border p-3 mb-2 flex justify-between"
+                  className="bg-pink-50 border border-pink-100 rounded-xl p-4 mb-4 shadow-sm hover:shadow-md transition-all duration-300 flex justify-between items-start"
                 >
 
-                  <div>
+                  {/* LEFT CONTENT */}
+                  <div className="space-y-2">
 
-                    <b
-                      className="cursor-pointer"
+                    {/* TITLE */}
+                    <div
+                      className="flex items-center gap-2 cursor-pointer"
                       onClick={() => {
                         setSelectedLocation(location);
                         setShowModal(true);
                         setCurrentImg(0);
                       }}
                     >
-                      {location.name}
-                    </b>
+                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                        <MapPin className="w-4 h-4 text-primary" />
+                      </div>
 
-                    <div>
-                      {location.lat}, {location.lng}
+                      <h3 className="font-semibold text-gray-800 text-lg">
+                        {location.name}
+                      </h3>
                     </div>
-                      {location.mapLink && (
- <a
-  href={
-    locationForm.mapLink
-      ? locationForm.mapLink
-      : "https://maps.google.com"
-  }
-  target="_blank"
-  rel="noreferrer"
-  className="inline-block bg-blue-500 text-white px-3 py-1 rounded text-sm"
->
-  Open Google Map
-</a>
-)}
+
+                    {/* COORDINATES */}
+                    <p className="text-sm text-gray-500">
+  {addresses[location.id] ? (
+    addresses[location.id]
+  ) : (
+    <span className="animate-pulse text-pink-400">
+      🌸 Loading address...
+    </span>
+  )}
+</p>
+
+                    {/* MAP LINK */}
+                    {location.mapLink && (
+                      <a
+                        href={location.mapLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-block text-sm text-primary hover:underline"
+                      >
+                        Open in Google Maps →
+                      </a>
+                    )}
+
                   </div>
 
-                  <div>
+                  {/* ACTION BUTTONS */}
+                  <div className="flex gap-2">
 
                     <button
-                      onClick={() =>
-                        handleEditLocation(location)
-                      }
+                      onClick={() => handleEditLocation(location)}
+                      className="p-2 rounded-lg bg-blue-100 hover:bg-blue-200 transition"
                     >
-                      <Edit2 />
+                      <Edit2 className="w-4 h-4 text-blue-600" />
                     </button>
 
                     <button
-                      onClick={() =>
-                        handleRemoveLocation(location.id)
-                      }
+                      onClick={() => setDeleteId(location.id)}
+                      className="p-2 rounded-lg bg-red-100 hover:bg-red-200 transition"
                     >
-                      <Trash2 />
+                      <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
 
                   </div>
@@ -664,7 +737,41 @@ export function AdminLocationsPage() {
         </div>
 
       )}
+      {deleteId && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 
+          <div className="bg-white rounded-2xl p-6 w-[350px] text-center shadow-xl">
+
+            <h2 className="text-xl font-semibold text-primary mb-3">
+              🌸 Confirm Delete
+            </h2>
+
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete this location?
+            </p>
+
+            <div className="flex justify-center gap-4">
+
+              <button
+                onClick={() => setDeleteId(null)}
+                className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleRemoveLocation}
+                className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-pink-600"
+              >
+                Delete
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
     </div>
 
   );

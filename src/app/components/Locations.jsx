@@ -17,7 +17,7 @@ export function Locations() {
 
     locations.forEach(loc => {
 
-      if (!loc.lat || !loc.lng) return;5
+      if (!loc.lat || !loc.lng) return;
 
       fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${loc.lat}&lon=${loc.lng}`
