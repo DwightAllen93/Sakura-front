@@ -4,7 +4,7 @@ import {
   useLocation,
   useNavigate,
 } from "react-router";
-
+import toast, { Toaster } from "react-hot-toast";
 import {
   LayoutDashboard,
   Briefcase,
@@ -128,12 +128,28 @@ export function AdminLayout() {
         <div className="p-4 border-t">
 
           <button
-            onClick={() => {
-              if (window.confirm("Logout?")) {
-                logout();
-                navigate("/login");
-              }
-            }}
+          onClick={async () => {
+  toast("🌸 Logging out...", {
+    icon: "🌸",
+    style: {
+      background: "#fce7f3",
+      color: "#9d174d",
+      border: "1px solid #f9a8d4",
+      borderRadius: "12px",
+    },
+  });
+
+  try {
+    await fetch("https://ejeepthesis.site/backend/logout.php");
+  } catch (err) {
+    console.log("Logout API failed");
+  }
+
+  setTimeout(() => {
+    logout(); // clear frontend
+    navigate("/login");
+  }, 1000);
+}}
             className="w-full flex items-center gap-2 px-4 py-3 rounded-lg
             text-red-600 hover:bg-red-50 transition"
           >

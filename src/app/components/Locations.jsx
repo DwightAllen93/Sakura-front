@@ -10,6 +10,12 @@ export function Locations() {
   const [addresses, setAddresses] =
     useState({});
 
+  // ✅ ADDED (gallery state)
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [currentImg, setCurrentImg] = useState(0);
+
+  const API = "https://ejeepthesis.site/backend/uploads/locations/"; // ✅ ADDED
+
 
   // ================= reverse geocode
 
@@ -17,7 +23,7 @@ export function Locations() {
 
     locations.forEach(loc => {
 
-      if (!loc.lat || !loc.lng) return;
+      if (!loc.lat || !loc.lng) return;5
 
       fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${loc.lat}&lon=${loc.lng}`
@@ -42,13 +48,8 @@ export function Locations() {
 
     <section
       className="py-20 relative overflow-hidden bg-cover bg-center"
-      style={{
-        backgroundImage:
-          `url(/background.png)`
-      }}
+      
     >
-
-      <CherryBlossoms />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
@@ -104,12 +105,36 @@ export function Locations() {
 
                   <div
                     key={location.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:border-primary transition-colors"
+
+                    // ✅ UPDATED (clickable for gallery)
+                    onClick={() => {
+                      if (location.images && location.images.length > 0) {
+                        setSelectedLocation(location);
+                        setCurrentImg(0);
+                      }
+                    }}
+
+                    className="border border-gray-200 rounded-lg p-4 hover:border-primary transition-colors cursor-pointer"
                   >
+
+                    {/* ✅ ADDED MAIN IMAGE */}
+                    {location.images && location.images.length > 0 && (
+                      <img
+                        src={API + location.images[0]}
+                        className="w-full h-40 object-cover rounded-lg mb-3"
+                      />
+                    )}
 
                     <h3 className="font-semibold mb-2">
                       {location.name}
                     </h3>
+
+                    {/* ✅ ADDED IMAGE COUNT */}
+                    {location.images && (
+                      <p className="text-xs text-gray-400 mb-2">
+                        📸 {location.images.length} photos
+                      </p>
+                    )}
 
 
                     <div className="flex items-start gap-2 text-sm text-muted-foreground mb-3">
@@ -173,6 +198,48 @@ export function Locations() {
         </div>
 
       </div>
+
+
+      {/* ✅ ADDED GALLERY MODAL */}
+      {selectedLocation && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+
+          <div className="bg-white p-6 rounded-2xl w-[90%] max-w-2xl">
+
+            {/* MAIN IMAGE */}
+            <img
+              src={API + selectedLocation.images[currentImg]}
+              className="w-full h-80 object-cover rounded-lg mb-4"
+            />
+
+            {/* THUMBNAILS */}
+            <div className="flex gap-2 overflow-x-auto">
+
+              {selectedLocation.images.map((img, i) => (
+                <img
+                  key={i}
+                  src={API + img}
+                  onClick={() => setCurrentImg(i)}
+                  className={`w-20 h-20 object-cover rounded cursor-pointer ${
+                    currentImg === i ? "border-2 border-primary" : ""
+                  }`}
+                />
+              ))}
+
+            </div>
+
+            {/* CLOSE BUTTON */}
+            <button
+              onClick={() => setSelectedLocation(null)}
+              className="mt-4 w-full bg-primary text-white py-2 rounded-lg"
+            >
+              Close
+            </button>
+
+          </div>
+
+        </div>
+      )}
 
     </section>
 

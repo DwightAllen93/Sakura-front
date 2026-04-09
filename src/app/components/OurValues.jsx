@@ -57,7 +57,7 @@ export function OurValues() {
   return (
     <section
   className="py-20 relative overflow-hidden bg-cover bg-center"
-  style={{ backgroundImage: `url(/background.png)` }}
+  style={{ backgroundImage: `url(/background2.png)` }}
 >
       {/* Floating Cherry Blossom Petals */}
       <div className="absolute inset-0 pointer-events-none">

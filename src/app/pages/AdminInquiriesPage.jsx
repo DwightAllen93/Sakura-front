@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import { useData } from "../context/DataContext";
 import { useAuth } from "../context/AuthContext";
+import toast, { Toaster } from "react-hot-toast";
 import {
   Mail,
   Phone,
@@ -8,29 +9,76 @@ import {
   Trash2,
   CheckCircle,
   LogOut,
+  Eye,Reply 
 } from "lucide-react";
 import { CherryBlossoms } from "../components/CherryBlossoms";
 
 export function AdminInquiriesPage() {
-  const {
-    inquiries,
-    removeInquiry,
-    updateInquiryStatus,
-  } = useData();
+ const {
+  inquiries,
+  fetchInquiries, // ✅ ADD THIS
+} = useData();
 
   const { logout } = useAuth();
   const navigate = useNavigate();
 
-  const handleRemoveInquiry = (id) => {
-    if (window.confirm("Are you sure you want to delete this inquiry?")) {
-      removeInquiry(id);
-    }
-  };
+  const handleRemoveInquiry = async (id) => {
+  try {
+    const formData = new FormData();
+    formData.append("id", id);
 
-  const handleStatusChange = (id, newStatus) => {
-    updateInquiryStatus(id, newStatus);
-  };
+    await fetch("https://ejeepthesis.site/backend/delete-inquiry.php", {
+      method: "POST",
+      body: formData,
+    });
 
+    toast.success("🗑️ Inquiry deleted");
+
+    fetchInquiries(); // 🔥 no reload
+
+  } catch (err) {
+    toast.error("Delete failed ❌");
+  }
+};
+const handleReply = (inquiry) => {
+  const subject = encodeURIComponent("Re: Your inquiry to Sakura Care");
+
+  const body = encodeURIComponent(
+`Hi ${inquiry.name},
+
+Thank you for contacting Sakura Care 🌸
+
+Regarding your message:
+"${inquiry.message}"
+
+We would like to assist you further.
+
+Best regards,
+Sakura Care Team
+`
+  );
+
+  window.location.href = `mailto:${inquiry.email}?subject=${subject}&body=${body}`;
+};
+  const handleStatusChange = async (id, status) => {
+  try {
+    const formData = new FormData();
+    formData.append("id", id);
+    formData.append("status", status);
+
+    await fetch("https://ejeepthesis.site/backend/update-inquiry-status.php", {
+      method: "POST",
+      body: formData,
+    });
+
+    toast.success("🌸 Status updated!");
+
+    fetchInquiries(); // 🔥 refresh UI
+
+  } catch (error) {
+    toast.error("Failed to update ❌");
+  }
+};
   const formatDate = (dateString) => {
     const date = new Date(dateString);
 
@@ -44,8 +92,20 @@ export function AdminInquiriesPage() {
   };
 
   return (
-    <div className="bg-background min-h-screen">
 
+    
+    <div className="bg-background min-h-screen">
+<Toaster
+  position="top-right"
+  toastOptions={{
+    style: {
+      background: "#fce7f3",
+      color: "#9d174d",
+      border: "1px solid #f9a8d4",
+      borderRadius: "12px",
+    },
+  }}
+/>
       {/* HERO */}
       <section
         className="py-20 bg-cover bg-center"
@@ -124,7 +184,7 @@ export function AdminInquiriesPage() {
 
                       <div className="flex items-center gap-2 text-sm">
                         <Calendar className="w-4 h-4" />
-                        {formatDate(inquiry.date)}
+                        {formatDate(inquiry.created_at)}
                       </div>
 
                     </div>
@@ -146,7 +206,7 @@ export function AdminInquiriesPage() {
                       />
 
                       <span>
-                        {inquiry.status}
+                       {inquiry.status || "New"}
                       </span>
 
                     </div>
@@ -154,34 +214,43 @@ export function AdminInquiriesPage() {
                   </div>
 
 
-                  <div className="flex flex-col gap-2">
+                 <div className="flex flex-col gap-2">
 
-                    {inquiry.status !== "Resolved" && (
-                      <button
-                        onClick={() =>
-                          handleStatusChange(
-                            inquiry.id,
-                            "Resolved"
-                          )
-                        }
-                        className="bg-green-100 p-2 rounded"
-                      >
-                        <CheckCircle className="w-5 h-5" />
-                      </button>
-                    )}
+  {/* MARK AS READ */}
+  {inquiry.status === "New" && (
+   <button
+  onClick={() => handleStatusChange(inquiry.id, "Read")}
+  className="bg-blue-100 hover:bg-blue-200 p-2 rounded-lg transition"
+>
+  <Eye className="w-5 h-5 text-blue-600" />
+</button>
+  )}
+<button
+  onClick={() => handleReply(inquiry)}
+  className="bg-pink-100 hover:bg-pink-200 p-2 rounded-lg transition"
+  title="Reply"
+>
+  <Reply className="w-5 h-5 text-pink-600" />
+</button>
+  {/* MARK AS REPLIED */}
+  {inquiry.status !== "Replied" && (
+    <button
+      onClick={() => handleStatusChange(inquiry.id, "Replied")}
+      className="bg-green-100 hover:bg-green-200 p-2 rounded"
+    >
+      <CheckCircle className="w-5 h-5 text-green-600" />
+    </button>
+  )}
 
-                    <button
-                      onClick={() =>
-                        handleRemoveInquiry(
-                          inquiry.id
-                        )
-                      }
-                      className="bg-red-100 p-2 rounded"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
+  {/* DELETE */}
+  <button
+    onClick={() => handleRemoveInquiry(inquiry.id)}
+    className="bg-red-100 hover:bg-red-200 p-2 rounded"
+  >
+    <Trash2 className="w-5 h-5 text-red-600" />
+  </button>
 
-                  </div>
+</div>
 
                 </div>
 

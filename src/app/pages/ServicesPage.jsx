@@ -124,11 +124,8 @@ export function ServicesPage() {
 />
 
       {/* Hero */}
-      <section
-        className="py-20 relative overflow-hidden bg-cover bg-center"
-        style={{ backgroundImage: `url(/background.png)` }}
-      >
-        <CherryBlossoms />
+      <section className="py-20 relative overflow-hidden bg-gray-50">
+        
 
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-4xl lg:text-5xl text-primary">
@@ -205,11 +202,9 @@ export function ServicesPage() {
       </section>
 
       {/* Get in Touch Section */}
-      <section
-  className="py-20 relative overflow-hidden bg-cover bg-center"
-  style={{ backgroundImage: `url(/background2.png)` }}
->
-         <CherryBlossoms />
+      <section className="py-20 relative overflow-hidden bg-gray-50">
+
+         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-12 space-y-4">
             <h2 className="text-3xl lg:text-4xl text-primary">

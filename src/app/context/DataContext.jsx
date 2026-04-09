@@ -21,31 +21,21 @@ export function useData() {
 
 export function DataProvider({ children }) {
 
-  const [services, setServices] =
-    useState([]);
+  const [services, setServices] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [inquiries, setInquiries] = useState([]);
 
-  const [locations, setLocations] =
-    useState([]);
-
-  const [inquiries, setInquiries] =
-    useState([]);
-
-
-  // ✅ fetch services
+  // ===================== SERVICES =====================
   useEffect(() => {
 
-    fetch(
-      "https://ejeepthesis.site/backend/get-services.php"
-    )
+    fetch("https://ejeepthesis.site/backend/get-services.php")
       .then(res => res.json())
       .then(data => {
-
         if (Array.isArray(data)) {
           setServices(data);
         } else {
           setServices([]);
         }
-
       })
       .catch(() => {
         setServices([]);
@@ -53,22 +43,17 @@ export function DataProvider({ children }) {
 
   }, []);
 
-
-  // ✅ fetch locations
+  // ===================== LOCATIONS =====================
   useEffect(() => {
 
-    fetch(
-      "https://ejeepthesis.site/backend/get-locations.php"
-    )
+    fetch("https://ejeepthesis.site/backend/get-locations.php")
       .then(res => res.json())
       .then(data => {
-
         if (Array.isArray(data)) {
           setLocations(data);
         } else {
           setLocations([]);
         }
-
       })
       .catch(() => {
         setLocations([]);
@@ -76,14 +61,52 @@ export function DataProvider({ children }) {
 
   }, []);
 
+  // ===================== INQUIRIES =====================
+  useEffect(() => {
 
+    fetch("https://ejeepthesis.site/backend/get-inquiries.php")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setInquiries(data);
+        } else {
+          setInquiries([]);
+        }
+      })
+      .catch(() => {
+        setInquiries([]);
+      });
+
+  }, []);
+
+  // ===================== MANUAL REFRESH =====================
+  const fetchInquiries = async () => {
+    try {
+      const res = await fetch("https://ejeepthesis.site/backend/get-inquiries.php");
+      const data = await res.json();
+
+      if (Array.isArray(data)) {
+        setInquiries(data);
+      } else {
+        setInquiries([]);
+      }
+
+    } catch (error) {
+      console.log("Failed to fetch inquiries");
+      setInquiries([]);
+    }
+  };
+
+  // ===================== PROVIDER =====================
   const value = {
-  services,
-  setServices, // 🔥 ADD THIS
-  locations,
-  setLocations,
-  inquiries,
-};
+    services,
+    setServices,
+    locations,
+    setLocations,
+    inquiries,
+    setInquiries,
+    fetchInquiries, // 🔥 important for real-time update
+  };
 
   return (
     <DataContext.Provider value={value}>

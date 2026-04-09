@@ -5,7 +5,7 @@ export function Hero() {
   return (
   <section
   className="py-20 relative overflow-hidden bg-cover bg-center"
-  style={{ backgroundImage: `url(/background.png)` }}
+  style={{ backgroundImage: `url(/background1.png)` }}
 >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">

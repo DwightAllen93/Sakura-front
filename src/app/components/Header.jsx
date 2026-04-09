@@ -41,7 +41,7 @@ export function Header() {
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="transition-transform hover:scale-105 duration-200">
-               <img src="/logo.png" className="h-14 w-auto" />
+               <img src="/logo.png" className="h-20 w-auto" />
             </Link>
           </div>
 
@@ -72,7 +72,7 @@ export function Header() {
               to="/locations"
               className="text-foreground hover:text-primary transition-all duration-300 font-semibold hover:scale-105"
             >
-              Locations
+              Accomodations
             </Link>
 
           </nav>

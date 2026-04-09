@@ -26,11 +26,9 @@ export function AboutPage() {
       </section>
 
       {/* Introduction Section */}
-     <section
-  className="py-20 relative overflow-hidden bg-cover bg-center"
-  style={{ backgroundImage: `url(/background2.png)` }}
+     <section className="py-20 relative overflow-hidden bg-gray-50"
 >
-        <CherryBlossoms />
+        
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <p className="text-lg text-gray-700 leading-relaxed mb-6">
             We believe we empower lives! We do this through a
@@ -39,7 +37,7 @@ export function AboutPage() {
             respect and compassion for each individual. We are
             dedicated to supporting those with complex
             behavioural needs, providing comprehensive care that
-            prioritizes well-being and fosters meaningful
+            prioritises well-being and fosters meaningful
             growth.
           </p>
         </div>
@@ -48,9 +46,9 @@ export function AboutPage() {
       {/* Our Goals Section */}
       <section
   className="py-20 relative overflow-hidden bg-cover bg-center"
-  style={{ backgroundImage: `url(/background.png)` }}
+  style={{ backgroundImage: `url(/background2.png)` }}
 >
-        <CherryBlossoms />
+        
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -62,9 +60,9 @@ export function AboutPage() {
                 providing high-quality services that enhance the
                 individual's life stages and transitions for all
                 clients. We are committed to delivering
-                responsive and tailored care that recognizes the
+                responsive and tailored care that recognises the
                 dignity and worth of every individual, by
-                recognizing the unique strengths and needs of
+                recognising the unique strengths and needs of
                 each person we support.
               </p>
             </div>
@@ -82,11 +80,9 @@ export function AboutPage() {
       </section>
 
       {/* The Heart of Our Values */}
-     <section
-  className="py-20 relative overflow-hidden bg-cover bg-center"
-  style={{ backgroundImage: `url(/background2.png)` }}
+     <section className="py-20 relative overflow-hidden bg-gray-50"
 >
-        <CherryBlossoms />
+        
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <h2 className="text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-12">
             THE HEART OF OUR VALUES
@@ -123,9 +119,9 @@ export function AboutPage() {
       {/* Research Focused Section */}
       <section
   className="py-20 relative overflow-hidden bg-cover bg-center"
-  style={{ backgroundImage: `url(/background.png)` }}
+  style={{ backgroundImage: `url(/background2.png)` }}
 >
-        <CherryBlossoms />
+        
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -156,11 +152,9 @@ export function AboutPage() {
       </section>
 
       {/* The Importance of Diversity Section */}
-    <section
-  className="py-20 relative overflow-hidden bg-cover bg-center"
-  style={{ backgroundImage: `url(/background2.png)` }}
+    <section className="py-20 relative overflow-hidden bg-gray-50"
 >
-        <CherryBlossoms />
+        
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
             THE IMPORTANCE OF DIVERSITY
@@ -180,9 +174,9 @@ export function AboutPage() {
       {/* Community Connection Section */}
        <section
   className="py-20 relative overflow-hidden bg-cover bg-center"
-  style={{ backgroundImage: `url(/background.png)` }}
+  style={{ backgroundImage: `url(/background2.png)` }}
 >
-        <CherryBlossoms />
+        
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -202,7 +196,7 @@ export function AboutPage() {
             </div>
             <div>
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800"
+               src="/a.jpg" 
                 alt="Community connection and participation"
                 className="rounded-2xl shadow-2xl w-full h-auto transition-all duration-500 hover:scale-105"
                 width={800}

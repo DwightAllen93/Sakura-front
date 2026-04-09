@@ -7,7 +7,7 @@ export function About() {
   className="py-20 relative overflow-hidden bg-cover bg-center"
   style={{ backgroundImage: `url(/background2.png)` }}
 >
-      <CherryBlossoms />
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
@@ -39,7 +39,7 @@ export function About() {
                   <strong className="text-foreground">
                     Focus on Independence:
                   </strong>{" "}
-                  We prioritize empowerment, helping individuals
+                  We prioritise empowerment, helping individuals
                   maintain their autonomy and build on their
                   unique strengths.
                 </div>

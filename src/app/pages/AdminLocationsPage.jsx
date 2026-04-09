@@ -102,17 +102,23 @@ const handleLocationSubmit = async (e) => {
   formData.append("lng", locationForm.lng);
   formData.append("mapLink", locationForm.mapLink);
 
+  // NEW IMAGES
   locationForm.images.forEach((img) => {
     formData.append("images[]", img);
   });
 
+  // EXISTING IMAGES
+  editImages.forEach((img) => {
+    formData.append("existingImages[]", img);
+  });
+
   try {
-    let res;
 
     if (editingLocationId) {
+      // ================= UPDATE =================
       formData.append("id", editingLocationId);
 
-      res = await fetch(
+      await fetch(
         "https://ejeepthesis.site/backend/update-location.php",
         {
           method: "POST",
@@ -121,8 +127,10 @@ const handleLocationSubmit = async (e) => {
       );
 
       toast.success("🌸 Location updated!");
+
     } else {
-      res = await fetch(
+      // ================= ADD =================
+      await fetch(
         "https://ejeepthesis.site/backend/add-location.php",
         {
           method: "POST",
@@ -132,15 +140,11 @@ const handleLocationSubmit = async (e) => {
 
       toast.success("🌸 Location added!");
     }
-setLocalLocations(prev => [
-  ...prev,
-  {
-    id: Date.now(), // temporary id
-    ...locationForm,
-    images: previewImages
-  }
-]);
-    // ✅ RESET FORM (instead of reload)
+
+    
+    await refreshLocations();
+
+    // ================= RESET FORM =================
     setLocationForm({
       name: "",
       lat: "",
@@ -158,7 +162,12 @@ setLocalLocations(prev => [
     toast.error("Something went wrong ❌");
   }
 };
-
+  
+const refreshLocations = async () => {
+  const res = await fetch("https://ejeepthesis.site/backend/get-locations.php");
+  const data = await res.json();
+  setLocalLocations(data);
+};
 
   // ===================== EDIT
 
@@ -263,55 +272,55 @@ const handleRemoveLocation = async () => {
 
   // ===================== MAP
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    if (!window.google) return;
+  //   if (!window.google) return;
 
-    const mapDiv =
-      document.getElementById("map");
+  //   const mapDiv =
+  //     document.getElementById("map");
 
-    if (!mapDiv) return;
+  //   if (!mapDiv) return;
 
-    const map =
-      new window.google.maps.Map(
-        mapDiv,
-        {
-          center: {
-            lat: -25.2744,
-            lng: 133.7751,
-          },
-          zoom: 6,
-        }
-      );
+  //   const map =
+  //     new window.google.maps.Map(
+  //       mapDiv,
+  //       {
+  //         center: {
+  //           lat: -25.2744,
+  //           lng: 133.7751,
+  //         },
+  //         zoom: 6,
+  //       }
+  //     );
 
-    let marker = null;
+  //   let marker = null;
 
-    map.addListener("click", e => {
+  //   map.addListener("click", e => {
 
-      const lat =
-        e.latLng.lat();
+  //     const lat =
+  //       e.latLng.lat();
 
-      const lng =
-        e.latLng.lng();
+  //     const lng =
+  //       e.latLng.lng();
 
-      if (marker)
-        marker.setMap(null);
+  //     if (marker)
+  //       marker.setMap(null);
 
-      marker =
-        new window.google.maps.Marker({
-          position: { lat, lng },
-          map,
-        });
+  //     marker =
+  //       new window.google.maps.Marker({
+  //         position: { lat, lng },
+  //         map,
+  //       });
 
-      setLocationForm(prev => ({
-        ...prev,
-        lat,
-        lng,
-      }));
+  //     setLocationForm(prev => ({
+  //       ...prev,
+  //       lat,
+  //       lng,
+  //     }));
 
-    });
+  //   });
 
-  }, []);
+  // }, []);
 
 
   // ===================== UI
@@ -463,13 +472,13 @@ const handleRemoveLocation = async () => {
 
                 {/* MAP UI */}
 
-                <div
+                {/* <div
                   id="map"
                   style={{
                     width: "100%",
                     height: "300px",
                   }}
-                ></div>
+                ></div> */}
 
 
                 {/* upload */}
@@ -607,7 +616,7 @@ const handleRemoveLocation = async () => {
                 >
 
                   {/* LEFT CONTENT */}
-                  <div className="space-y-2">
+                 <div className="space-y-2 flex-1 min-w-0">
 
                     {/* TITLE */}
                     <div
@@ -622,9 +631,9 @@ const handleRemoveLocation = async () => {
                         <MapPin className="w-4 h-4 text-primary" />
                       </div>
 
-                      <h3 className="font-semibold text-gray-800 text-lg">
-                        {location.name}
-                      </h3>
+                     <h3 className="font-semibold text-gray-800 text-lg truncate max-w-[200px]">
+  {location.name}
+</h3>
                     </div>
 
                     {/* COORDINATES */}

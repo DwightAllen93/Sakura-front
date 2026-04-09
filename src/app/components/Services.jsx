@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 import { Link } from "react-router";
-import { CherryBlossoms } from "./CherryBlossoms";
+
 import { useData } from "../context/DataContext";
 
 
@@ -31,11 +31,8 @@ export function Services() {
 
 
   return (
-    <section
-      className="py-20 relative overflow-hidden bg-cover bg-center"
-      style={{ backgroundImage: `url(/background.png)` }}
-    >
-      <CherryBlossoms />
+    <section className="py-20 bg-gray-50">
+      
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
