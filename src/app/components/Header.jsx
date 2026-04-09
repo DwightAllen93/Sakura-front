@@ -134,7 +134,7 @@ export function Header() {
                 onClick={closeMobileMenu}
                 className="text-foreground hover:text-primary hover:bg-pink-50 transition-all duration-300 font-semibold px-4 py-3 rounded-lg"
               >
-                Locations
+                Accomodations
               </Link>
 
            
