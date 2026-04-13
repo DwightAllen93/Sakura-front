@@ -27,6 +27,7 @@ const { services, setServices } = useData();
     description: "",
     icon: "home",
     image: null,
+    
   });
 
   const [preview, setPreview] = useState(null);
@@ -154,19 +155,24 @@ toast.success(
   setDeleteId(null); // close modal
 };
   const [editingId, setEditingId] = useState(null);
-  const handleEdit = (service) => {
+ const handleEdit = (service) => {
+  setServiceForm({
+    title: service.title,
+    tagline: service.tagline,
+    description: service.description,
+    icon: service.icon,
+    image: null,
+  });
 
-    setServiceForm({
-      title: service.title,
-      tagline: service.tagline,
-      description: service.description,
-      icon: service.icon,
-      image: null,
-    });
+  // ✅ SHOW EXISTING IMAGE
+  if (service.image) {
+    setPreview(
+      "https://ejeepthesis.site/backend/uploads/" + service.image
+    );
+  }
 
-    setEditingId(service.id);
-  };
-
+  setEditingId(service.id);
+};
 
 
 
@@ -433,10 +439,26 @@ toast.success(
               {services.map((s) => (
                 <div key={s.id} className="border p-3 mb-2 rounded flex justify-between items-center">
 
-                  <div>
-                    <b>{s.title}</b>
-                    <div>{s.tagline}</div>
-                  </div>
+                 <div className="flex items-center gap-3">
+
+  {/* IMAGE */}
+  {s.image && (
+    <img
+      src={
+        s.image.startsWith("http")
+          ? s.image
+          : "https://ejeepthesis.site/backend/uploads/" + s.image
+      }
+      className="w-12 h-12 object-cover rounded-lg"
+    />
+  )}
+
+  <div>
+    <b>{s.title}</b>
+    <div className="text-sm text-gray-500">{s.tagline}</div>
+  </div>
+
+</div>
 
                   <div className="flex gap-2">
 

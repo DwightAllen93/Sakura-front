@@ -42,7 +42,7 @@ export const router = createBrowserRouter([
     { path: "dashboard", element: <AdminPage /> },
   { path: "services", element: <AdminServicesPage /> },
   { path: "locations", element: <AdminLocationsPage /> },
-    { path: "inquiries", element: <AdminInquiriesPage /> },
+    { path: "Enquiries", element: <AdminInquiriesPage /> },
 ],
 }
 

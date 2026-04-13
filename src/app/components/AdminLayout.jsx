@@ -42,8 +42,8 @@ export function AdminLayout() {
       icon: MapPin,
     },
     {
-      name: "Inquiries",
-      path: "/admin/inquiries",
+      name: "Enquiries",
+      path: "/admin/Enquiries",
       icon: Mail,
     },
   ];

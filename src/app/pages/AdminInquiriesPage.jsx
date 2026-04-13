@@ -126,7 +126,7 @@ Sakura Care Team
 
         <div className="text-center">
           <h1 className="text-4xl text-primary">
-            View Inquiries
+            View Enquiries
           </h1>
         </div>
       </section>
@@ -141,13 +141,13 @@ Sakura Care Team
 
             <h2 className="text-2xl text-primary mb-6 flex items-center gap-2">
               <Mail className="w-6 h-6" />
-              All Inquiries
+              All Enquiries
             </h2>
 
 
             {inquiries.length === 0 && (
               <p className="text-muted-foreground text-center py-8">
-                No inquiries available
+                No Enquiries available
               </p>
             )}
 

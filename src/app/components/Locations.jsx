@@ -33,8 +33,9 @@ export function Locations() {
 
           setAddresses(prev => ({
             ...prev,
-            [loc.id]:
-              data.display_name,
+            [loc.id]: data.display_name
+  ? data.display_name.split(",").slice(0, 2).join(", ")
+  : "",
           }));
 
         });
