@@ -45,13 +45,13 @@ export function CommunityDiversity() {
 
         {/* Diversity and Inclusivity */}
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="order-2 lg:order-1">
-            <ImageWithFallback
-              src="https://images.unsplash.com/photo-1622258416235-d0390821fc08?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdXBwb3J0JTIwd29ya2VyJTIwaGVhZHNldCUyMGhlbHBpbmclMjBwZXJzb24lMjBvZmZpY2V8ZW58MXx8fHwxNzczNTU3NTUxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-              alt="Support worker assisting participant"
-              className="w-full h-[400px] object-cover rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105"
-            />
-          </div>
+        <div className="order-2 lg:order-1">
+  <ImageWithFallback
+    src="/112.jpg"
+    alt="Support worker assisting participant"
+    className="w-full h-[400px] object-cover rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105"
+  />
+</div>
           <div className="order-1 lg:order-2">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">
               DIVERSITY AND INCLUSIVITY

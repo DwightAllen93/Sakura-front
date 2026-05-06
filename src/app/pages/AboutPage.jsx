@@ -68,7 +68,7 @@ export function AboutPage() {
             </div>
             <div>
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1527689368864-3a821dbccc34?w=800"
+                src="/goal.jpg"
                 alt="Person celebrating outdoors"
                 className="rounded-2xl shadow-2xl w-full h-auto transition-all duration-500 hover:scale-105"
                 width={800}
@@ -126,7 +126,7 @@ export function AboutPage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <img
-                src="https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800"
+                src="/RESEARCH.jpg"
                 alt="Research focused care"
                 className="rounded-2xl shadow-2xl w-full h-auto transition-all duration-500 hover:scale-105"
               />

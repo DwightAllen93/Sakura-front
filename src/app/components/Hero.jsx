@@ -36,14 +36,14 @@ export function Hero() {
 
           {/* IMAGE SECTION */}
           <div className="relative group animate-fadeLeft">
-            <ImageWithFallback
-              src="https://images.unsplash.com/photo-1764006145420-df3006edf060?w=800"
-              alt="Caregiver providing compassionate support to person in wheelchair"
-              className="rounded-2xl shadow-2xl w-full h-auto transition-all duration-500 group-hover:scale-105 group-hover:shadow-3xl"
-              width={800}
-              height={600}
-            />
-          </div>
+  <ImageWithFallback
+    src="/111.jpg"
+    alt="Caregiver providing compassionate support to person in wheelchair"
+    className="rounded-2xl shadow-2xl w-full h-auto transition-all duration-500 group-hover:scale-105 group-hover:shadow-3xl"
+    width={800}
+    height={600}
+  />
+</div>
         </div>
       </div>
     </section>

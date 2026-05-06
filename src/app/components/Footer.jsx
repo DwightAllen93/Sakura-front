@@ -39,8 +39,9 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-gray-300">
               <li>1300 928 928</li>
               <li>info@sakuracare.com.au</li>
-              <li>Avenue, Mawson Lakes SA 5095</li>
               <li>Endeavour House, 3E/11 Fourth</li>
+              <li>Avenue, Mawson Lakes SA 5095</li>
+              
             </ul>
           </div>
 
